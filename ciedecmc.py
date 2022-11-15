@@ -15,18 +15,34 @@ def e_cmc(standard, sample, pl, pc):
     L = sample[0]
     A = sample[1]
     B = sample[2]
-    
+
     #from Lab to LCH
     Cab_standard = np.sqrt(np.power(As,2)+np.power(Bs,2))
     Cab_sample = np.sqrt(np.power(A,2)+np.power(B,2))
+    Hab_standard = np.degrees(np.arctan2(Bs,As))
+    if Hab_standard < 0:
+        Hab_standard += 360
     Hab_sample = np.degrees(np.arctan2(B,A))
     if Hab_sample < 0:
         Hab_sample += 360
     
     delta_L = L - Ls
     delta_C = Cab_sample - Cab_standard
+    
+    #figuring out the +- of delta_E_Lab
+    m = Hab_sample - Hab_standard
+    if m >= 0:
+        p = 1
+    else:
+        p = -1
+    
+    if abs(m) <= 180:
+        q = 1
+    else:
+        q = -1
+    
     delta_E_Lab_square = np.power((L - Ls),2) + np.power((A-As),2) + np.power((B-Bs),2)
-    delta_H = np.sqrt(delta_E_Lab_square - np.power((L-Ls),2) - np.power(delta_C,2))
+    delta_H = p * q * np.sqrt(delta_E_Lab_square - np.power((L-Ls),2) - np.power(delta_C,2))
     
     #formating S_L S_C S_H(special this motherfucker)
     if Ls < 16:
